@@ -1,4 +1,4 @@
-# 📅 Google Calendar Gym
+# Google Calendar Gym
 
 > **A Reinforcement Learning Environment for Calendar Management**
 
@@ -9,23 +9,23 @@
 
 Google Calendar Gym is a full-stack RL training environment that simulates Google Calendar's behavior. Built for AI hackathons and research, it provides a realistic platform for training agents on calendar management tasks.
 
-**[Quick Start](#-quick-start)** • **[Features](#-features)** • **[RL Gym API](#-rl-gym-api)** • **[Testing](#-testing)**
+**[Quick Start](#quick-start)** • **[Features](#features)** • **[RL Gym API](#rl-gym-api)** • **[Testing](#testing)**
 
 ---
 
-## 🎖️ Project Metrics
+## Project Metrics
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| **Dataset Realism Score** | 0.563/1.000 | ⭐⭐ Fair |
-| **Test Coverage** | 96.2% (25/26 passing) | ✅ Excellent |
-| **API Latency (p95)** | 71ms | ✅ <300ms target |
-| **Screenshot Dataset** | 200 frames | ✅ Complete |
-| **UI Performance** | 92/100 Lighthouse | ✅ Production-ready |
+| **Dataset Realism Score** | 0.563/1.000 | Fair (Low layout jitter: 0.225) |
+| **Test Coverage** | 87.2% (164/188 passing) | Good (24 DB isolation issues) |
+| **API Latency (p95)** | 71ms | Excellent (<300ms target) |
+| **Screenshot Dataset** | 200 frames | Complete |
+| **UI Performance** | 92/100 Lighthouse | Production-ready |
 
 ---
 
-## ✨ Features
+## Features
 
 ### Core Calendar (Google Calendar Behavior)
 - **Events**: Create, update, delete with conflict detection
@@ -64,7 +64,7 @@ Google Calendar Gym is a full-stack RL training environment that simulates Googl
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Python 3.9+
@@ -116,7 +116,7 @@ npm run dev
 
 ---
 
-## 🤖 RL Gym API
+## RL Gym API
 
 ### HTTP API Example
 
@@ -191,7 +191,7 @@ print(f"Screenshot: {result['screenshot'][:50]}...")  # Base64 PNG
 
 ---
 
-## 📊 ML Training Dataset
+## ML Training Dataset
 
 **200 diverse screenshots** across varied calendar states:
 
@@ -226,7 +226,7 @@ python realism_audit.py
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ```bash
 cd backend
@@ -242,10 +242,11 @@ python realism_audit.py
 ```
 
 **Test Results:**
-- ✅ 25/26 tests passing (96.2%)
-- ✅ 141+ tests across 8 modules
-- ✅ Black formatted
-- ✅ Comprehensive coverage
+- 164/188 tests passing (87.2%)
+- 24 tests fail due to database isolation issues in test setup
+- 188 total tests across 8 modules
+- Black formatted
+- Comprehensive coverage of core features
 
 **Test Modules:**
 - `test_acl.py` - ACL & permissions
@@ -259,7 +260,7 @@ python realism_audit.py
 
 ---
 
-## 📚 API Documentation
+## API Documentation
 
 **RESTful Endpoints:**
 - `/api/users` - User management
@@ -273,7 +274,7 @@ python realism_audit.py
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technologies |
 |-------|-------------|
@@ -285,7 +286,7 @@ python realism_audit.py
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 google_calendar_gym/
@@ -316,18 +317,18 @@ google_calendar_gym/
 
 ---
 
-## 🎯 Optional Tasks Completed
+## Optional Tasks Completed
 
 ✅ **E2E Gym Loop with Screenshots** - Binary rewards, 3 episode demo
 ✅ **UI Realism Simulation** - 7 popups, scroll jitter, color palette
 ✅ **Load Testing** - 71ms p95 latency (<300ms target)
 ✅ **Screenshot Dataset** - 200 frames, manifest, tar.gz
-✅ **Realism Audit** - 0.563/1.000 score
-✅ **Testing & Quality** - 96.2% passing, Black formatted
+✅ **Realism Audit** - 0.563/1.000 score (Fair rating)
+✅ **Testing & Quality** - 87.2% passing, Black formatted
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 **Backend Issues:**
 ```bash
@@ -350,7 +351,7 @@ npm install
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
@@ -364,17 +365,18 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
-## 📄 License
+## License
 
 MIT License - see [LICENSE](LICENSE) file.
 
 ---
 
-## 👥 Authors
+## Authors
 
-**Developed for AI Hackathon - Scaler**
+Developed for AI Hackathon - Scaler
 
-**Technologies:**
+### Technologies
+
 - [FastAPI](https://fastapi.tiangolo.com/) - Modern Python web framework
 - [React](https://reactjs.org/) - UI library
 - [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS
@@ -385,8 +387,8 @@ MIT License - see [LICENSE](LICENSE) file.
 
 <div align="center">
 
-**⭐ Star this repo if you find it useful! ⭐**
+**Star this repo if you find it useful!**
 
-Made with ❤️ for AI Hackathon
+Built for AI Hackathon
 
 </div>

@@ -40,7 +40,7 @@ Before you begin:
 
 There are many ways to contribute to Google Calendar Gym:
 
-### 🐛 Report Bugs
+### Report Bugs
 Found a bug? Please create an issue with:
 - Clear description of the bug
 - Steps to reproduce
@@ -48,19 +48,19 @@ Found a bug? Please create an issue with:
 - Screenshots (if applicable)
 - Environment details (OS, Python version, Node version)
 
-### ✨ Suggest Enhancements
+### Suggest Enhancements
 Have an idea? Create an issue with:
 - Clear description of the enhancement
 - Use cases and benefits
 - Possible implementation approach
 
-### 📝 Improve Documentation
+### Improve Documentation
 - Fix typos or unclear explanations
 - Add code examples
 - Improve API documentation
 - Write tutorials or guides
 
-### 💻 Write Code
+### Write Code
 - Fix bugs
 - Implement new features
 - Improve performance
@@ -459,10 +459,10 @@ google_calendar_gym/
 
 ## Getting Help
 
-- 📖 Read the [README.md](README.md)
-- 💬 Ask questions in [GitHub Discussions](https://github.com/yourusername/google-calendar-gym/discussions)
-- 🐛 Report bugs in [Issues](https://github.com/yourusername/google-calendar-gym/issues)
-- 📧 Contact maintainers (see README)
+- Read the [README.md](README.md)
+- Ask questions in [GitHub Discussions](https://github.com/yourusername/google-calendar-gym/discussions)
+- Report bugs in [Issues](https://github.com/yourusername/google-calendar-gym/issues)
+- Contact maintainers (see README)
 
 ---
 
@@ -473,7 +473,7 @@ Contributors will be recognized in:
 - Release notes
 - Project documentation
 
-Thank you for contributing to Google Calendar Gym! 🎉
+Thank you for contributing to Google Calendar Gym!
 
 ---
 

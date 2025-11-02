@@ -4,12 +4,12 @@ FastAPI backend for the Google Calendar Gym project with comprehensive calendar 
 
 ## Features
 
-- 🔐 **ACL Management** - Role-based access control with hierarchy
-- 📅 **Event Propagation** - Google Calendar-like event sharing
-- ⏰ **Reminder System** - APScheduler-based notifications
-- 🤖 **RL Gym Environment** - OpenAI Gym-compatible interface
-- 🔄 **Recurring Events** - Full RRULE support
-- 📊 **Comprehensive API** - RESTful endpoints with Swagger docs
+- **ACL Management** - Role-based access control with hierarchy
+- **Event Propagation** - Google Calendar-like event sharing
+- **Reminder System** - APScheduler-based notifications
+- **RL Gym Environment** - OpenAI Gym-compatible interface
+- **Recurring Events** - Full RRULE support
+- **Comprehensive API** - RESTful endpoints with Swagger docs
 
 ## Quick Start
 

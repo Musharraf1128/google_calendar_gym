@@ -28,7 +28,7 @@ class RealismAuditor:
     def load_data(self) -> bool:
         """Load manifest.csv data."""
         if not self.manifest_path.exists():
-            print(f"❌ Manifest not found: {self.manifest_path}")
+            print(f"Manifest not found: {self.manifest_path}")
             return False
 
         try:
@@ -36,10 +36,10 @@ class RealismAuditor:
                 reader = csv.DictReader(f)
                 self.data = list(reader)
 
-            print(f"✅ Loaded {len(self.data)} entries from manifest")
+            print(f"Loaded {len(self.data)} entries from manifest")
             return True
         except Exception as e:
-            print(f"❌ Failed to load manifest: {e}")
+            print(f"Failed to load manifest: {e}")
             return False
 
     def measure_popup_entropy(self) -> float:
@@ -216,14 +216,14 @@ class RealismAuditor:
     def print_report(self):
         """Print detailed realism audit report."""
         print("\n" + "=" * 80)
-        print("📊 GOOGLE CALENDAR GYM - REALISM AUDIT REPORT")
+        print("GOOGLE CALENDAR GYM - REALISM AUDIT REPORT")
         print("=" * 80)
 
-        print(f"\n📁 Dataset: {len(self.data)} screenshots")
+        print(f"\nDataset: {len(self.data)} screenshots")
 
         # Popup Entropy
         popup = self.metrics["popup_entropy"]
-        print(f"\n1️⃣  UI Popup Entropy: {popup['score']:.3f}")
+        print(f"\n1. UI Popup Entropy: {popup['score']:.3f}")
         print(f"    Raw Entropy: {popup['raw_entropy']:.3f}")
         print(f"    Max Entropy: {popup['max_entropy']:.3f}")
         print(f"    Unique Types: {popup['unique_types']}")
@@ -236,20 +236,20 @@ class RealismAuditor:
 
         # Color Variance
         color = self.metrics["color_variance"]
-        print(f"\n2️⃣  Color Variance: {color['score']:.3f}")
+        print(f"\n2. Color Variance: {color['score']:.3f}")
         print(f"    Mean Events/Screenshot: {color['event_count_mean']:.2f}")
         print(f"    Std Dev: {color['event_count_std']:.2f}")
         print(f"    Coefficient of Variation: {color['coefficient_of_variation']:.3f}")
 
         # Layout Jitter
         layout = self.metrics["layout_jitter"]
-        print(f"\n3️⃣  Layout Jitter: {layout['score']:.3f}")
+        print(f"\n3. Layout Jitter: {layout['score']:.3f}")
         print(f"    Unique Combinations: {layout['unique_combinations']}")
         print(f"    Total Screenshots: {layout['total_screenshots']}")
 
         # Event Density
         density = self.metrics["event_density"]
-        print(f"\n4️⃣  Event Density: {density['score']:.3f}")
+        print(f"\n4. Event Density: {density['score']:.3f}")
         print(f"    Coverage (0-10 range): {density['coverage']:.3f}")
         print(f"    Uniformity: {density['uniformity']:.3f}")
         print(f"    Unique Counts: {density['unique_counts']}")
@@ -262,29 +262,29 @@ class RealismAuditor:
         # Overall Score
         overall = self.metrics["overall"]
         print(f"\n" + "=" * 80)
-        print(f"🎯 OVERALL REALISM SCORE: {overall['score']:.3f}")
+        print(f"OVERALL REALISM SCORE: {overall['score']:.3f}")
         print("=" * 80)
 
         # Interpretation
         score = overall["score"]
         if score >= 0.8:
-            rating = "EXCELLENT ⭐⭐⭐⭐⭐"
+            rating = "EXCELLENT"
             comment = "Highly realistic dataset with excellent diversity"
         elif score >= 0.7:
-            rating = "VERY GOOD ⭐⭐⭐⭐"
+            rating = "VERY GOOD"
             comment = "Very realistic with good variation across dimensions"
         elif score >= 0.6:
-            rating = "GOOD ⭐⭐⭐"
+            rating = "GOOD"
             comment = "Realistic dataset with moderate diversity"
         elif score >= 0.5:
-            rating = "FAIR ⭐⭐"
+            rating = "FAIR"
             comment = "Acceptable realism but could improve diversity"
         else:
-            rating = "NEEDS IMPROVEMENT ⭐"
+            rating = "NEEDS IMPROVEMENT"
             comment = "Low realism score, increase variation"
 
-        print(f"\n📈 Rating: {rating}")
-        print(f"💬 {comment}\n")
+        print(f"\nRating: {rating}")
+        print(f"{comment}\n")
 
         # Component breakdown
         print("Component Scores (weighted):")
@@ -321,11 +321,11 @@ def main():
     success, score = auditor.run_audit()
 
     if success:
-        print(f"✅ Realism audit completed successfully")
-        print(f"📊 Score: {score:.3f}/1.000")
+        print(f"Realism audit completed successfully")
+        print(f"Score: {score:.3f}/1.000")
         return 0
     else:
-        print(f"❌ Realism audit failed")
+        print(f"Realism audit failed")
         return 1
 
 
