@@ -1,0 +1,42 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: calendar-gym-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./gym_calendar.db
+      - UI_REALISM=true
+    volumes:
+      - ./backend/gym_calendar.db:/app/gym_calendar.db
+      - ./backend/data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    networks:
+      - calendar-gym-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: calendar-gym-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000/api
+      - VITE_SIMULATE_POPUPS=true
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - calendar-gym-network
+
+networks:
+  calendar-gym-network:
+    driver: bridge

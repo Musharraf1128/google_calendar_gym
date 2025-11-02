@@ -66,10 +66,31 @@ Google Calendar Gym is a full-stack RL training environment that simulates Googl
 
 ## Quick Start
 
-### Prerequisites
-- Python 3.9+
-- Node.js 16+
-- pip and npm
+### Option 1: Docker (Recommended for Hackathon Submission)
+
+**Requirements:** Docker and Docker Compose
+
+```bash
+# Start the entire application
+docker-compose up --build
+
+# Access the application
+# Frontend: http://localhost:5173
+# Backend API: http://localhost:8000
+# API Docs: http://localhost:8000/docs
+```
+
+That's it! Docker will automatically:
+- Build both backend and frontend
+- Run database migrations
+- Seed sample data (10 users, 179 events)
+- Start all services
+
+See [DOCKER_SETUP.md](DOCKER_SETUP.md) for detailed Docker instructions.
+
+### Option 2: Manual Setup
+
+**Prerequisites:** Python 3.9+, Node.js 16+, pip and npm
 
 ### Backend Setup
 

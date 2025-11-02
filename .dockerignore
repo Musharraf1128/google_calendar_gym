@@ -1,0 +1,63 @@
+# Docker ignore file
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Database files (will be created in container)
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Frontend build (will be built in container)
+frontend/dist/
+frontend/build/
+
+# Large datasets
+backend/data/screenshots/
+backend/gym_screenshots/
+backend/gym_screenshots_realism/
+*.tar.gz
+
+# Environment variables (use docker-compose environment instead)
+.env
+.env.local
+
+# Git
+.git/
+.gitignore
+
+# Documentation (not needed in container)
+*.md
+LICENSE
