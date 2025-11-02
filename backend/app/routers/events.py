@@ -291,9 +291,9 @@ async def update_event(
 
     # DIAGNOSTIC LOGGING
     if "start" in update_data or "end" in update_data:
-        print("\n" + "="*80)
+        print("\n" + "=" * 80)
         print("📥 BACKEND: Event Update Received")
-        print("="*80)
+        print("=" * 80)
         print(f"Event ID: {event_id}")
         print(f"Event Summary: {event.summary}")
         print("\nCURRENT VALUES (in DB):")
@@ -308,7 +308,7 @@ async def update_event(
         if "end" in update_data:
             print(f"  New End: {update_data['end']}")
             print(f"  New End ISO: {update_data['end'].isoformat()}")
-        print("="*80 + "\n")
+        print("=" * 80 + "\n")
 
     # Validate times if both are being updated
     if "start" in update_data and "end" in update_data:
@@ -339,15 +339,15 @@ async def update_event(
 
     # DIAGNOSTIC LOGGING
     if "start" in update_data or "end" in update_data:
-        print("="*80)
+        print("=" * 80)
         print("💾 BACKEND: Event Updated in DB")
-        print("="*80)
+        print("=" * 80)
         print("STORED VALUES (UTC in DB):")
         print(f"  Start: {event.start}")
         print(f"  Start ISO: {event.start.isoformat()}")
         print(f"  End: {event.end}")
         print(f"  End ISO: {event.end.isoformat()}")
-        print("="*80 + "\n")
+        print("=" * 80 + "\n")
 
     return event
 
@@ -533,7 +533,9 @@ async def respond_to_event(
             db.add(notification)
             db.commit()
 
-            print(f"📧 Notification: {attendee.email} {attendee.response_status.value} event '{event.summary}'")
+            print(
+                f"📧 Notification: {attendee.email} {attendee.response_status.value} event '{event.summary}'"
+            )
 
     return attendee
 

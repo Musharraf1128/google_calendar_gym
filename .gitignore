@@ -42,6 +42,8 @@ htmlcov/
 
 # Database
 *.db
+*.db.backup
+*.db.pre-migration
 *.sqlite
 *.sqlite3
 
@@ -71,3 +73,11 @@ frontend/.vite/
 *.temp
 .cache/
 .claude/
+/package-lock.json
+
+# Large datasets and test artifacts
+backend/data/
+backend/gym_screenshots/
+backend/gym_screenshots_realism/
+*.tar.gz
+backend/load_test_results*.json

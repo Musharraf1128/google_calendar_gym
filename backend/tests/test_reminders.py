@@ -471,7 +471,9 @@ class TestReminderOverrides:
         assert log.minutes_before == 5
         assert log.event_summary == "5 Minute Override Test"
         assert "5 Minute Override Test" in log.message
-        assert "5 minute" in log.message  # Message format (test mode uses seconds but displays as minutes)
+        assert (
+            "5 minute" in log.message
+        )  # Message format (test mode uses seconds but displays as minutes)
 
     def test_set_event_reminders_service(self, db_session, test_calendar, scheduler):
         """Test set_event_reminders service function."""

@@ -188,9 +188,7 @@ def create_acl_entries(db, users, calendars):
         # Also create CalendarListEntry so user can see this calendar
         user = users[email]
         cal_list_entry = CalendarListEntry(
-            user_id=user.id,
-            calendar_id=eng_calendar.id,
-            is_primary=False
+            user_id=user.id, calendar_id=eng_calendar.id, is_primary=False
         )
         db.add(cal_list_entry)
 
@@ -213,9 +211,7 @@ def create_acl_entries(db, users, calendars):
         # Also create CalendarListEntry so user can see this calendar
         user = users[email]
         cal_list_entry = CalendarListEntry(
-            user_id=user.id,
-            calendar_id=mkt_calendar.id,
-            is_primary=False
+            user_id=user.id, calendar_id=mkt_calendar.id, is_primary=False
         )
         db.add(cal_list_entry)
 
@@ -233,16 +229,12 @@ def create_acl_entries(db, users, calendars):
             # Also create CalendarListEntry so user can see this calendar
             user = users[email]
             cal_list_entry = CalendarListEntry(
-                user_id=user.id,
-                calendar_id=company_calendar.id,
-                is_primary=False
+                user_id=user.id, calendar_id=company_calendar.id, is_primary=False
             )
             db.add(cal_list_entry)
 
             acl_count += 1
-            print(
-                f"   ✓ Granted {role.value} to {email} on {company_calendar.title}"
-            )
+            print(f"   ✓ Granted {role.value} to {email} on {company_calendar.title}")
 
     db.commit()
     return acl_count
@@ -270,9 +262,9 @@ def create_comprehensive_events(db, users, calendars):
         hour = randint(8, 18)
         minute = choice([0, 15, 30, 45])
 
-        start = now.replace(hour=hour, minute=minute, second=0, microsecond=0) + timedelta(
-            days=days_offset
-        )
+        start = now.replace(
+            hour=hour, minute=minute, second=0, microsecond=0
+        ) + timedelta(days=days_offset)
         duration = choice([30, 60, 90, 120, 180])  # minutes
         end = start + timedelta(minutes=duration)
 
@@ -485,7 +477,9 @@ def create_comprehensive_events(db, users, calendars):
     print("\n   Creating overlapping events...")
     for i in range(20):
         # Pick a random existing event to overlap with
-        existing_events = db.query(Event).filter(Event.is_all_day == False).limit(50).all()
+        existing_events = (
+            db.query(Event).filter(Event.is_all_day == False).limit(50).all()
+        )
         if existing_events:
             base_event = choice(existing_events)
 
@@ -522,9 +516,9 @@ def create_comprehensive_events(db, users, calendars):
         hour = choice([1, 2, 3, 22, 23])  # Late night / early morning
         minute = choice([0, 30])
 
-        start = now.replace(hour=hour, minute=minute, second=0, microsecond=0) + timedelta(
-            days=randint(0, 30)
-        )
+        start = now.replace(
+            hour=hour, minute=minute, second=0, microsecond=0
+        ) + timedelta(days=randint(0, 30))
         end = start + timedelta(hours=1)
 
         event = Event(
@@ -583,9 +577,15 @@ def print_comprehensive_summary(db):
     print(f"   - All-day events:         {all_day_count}")
 
     # Status breakdown
-    confirmed_count = db.query(Event).filter(Event.status == EventStatus.CONFIRMED).count()
-    tentative_count = db.query(Event).filter(Event.status == EventStatus.TENTATIVE).count()
-    cancelled_count = db.query(Event).filter(Event.status == EventStatus.CANCELLED).count()
+    confirmed_count = (
+        db.query(Event).filter(Event.status == EventStatus.CONFIRMED).count()
+    )
+    tentative_count = (
+        db.query(Event).filter(Event.status == EventStatus.TENTATIVE).count()
+    )
+    cancelled_count = (
+        db.query(Event).filter(Event.status == EventStatus.CANCELLED).count()
+    )
 
     print(f"\n   By Status:")
     print(f"   - Confirmed:              {confirmed_count}")
@@ -598,11 +598,19 @@ def print_comprehensive_summary(db):
     print(f"🔐 ACL Entries:              {acl_count}")
 
     # ACL breakdown by role
-    owner_acl = db.query(CalendarACL).filter(CalendarACL.role == CalendarRole.OWNER).count()
-    writer_acl = db.query(CalendarACL).filter(CalendarACL.role == CalendarRole.WRITER).count()
-    reader_acl = db.query(CalendarACL).filter(CalendarACL.role == CalendarRole.READER).count()
+    owner_acl = (
+        db.query(CalendarACL).filter(CalendarACL.role == CalendarRole.OWNER).count()
+    )
+    writer_acl = (
+        db.query(CalendarACL).filter(CalendarACL.role == CalendarRole.WRITER).count()
+    )
+    reader_acl = (
+        db.query(CalendarACL).filter(CalendarACL.role == CalendarRole.READER).count()
+    )
     freebusy_acl = (
-        db.query(CalendarACL).filter(CalendarACL.role == CalendarRole.FREE_BUSY_READER).count()
+        db.query(CalendarACL)
+        .filter(CalendarACL.role == CalendarRole.FREE_BUSY_READER)
+        .count()
     )
 
     print(f"\n   ACL by Role:")

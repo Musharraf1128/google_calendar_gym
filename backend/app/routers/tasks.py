@@ -28,9 +28,13 @@ router = APIRouter()
 @router.get("/users/{user_id}/tasks", response_model=List[TaskResponse])
 async def get_user_tasks(
     user_id: UUID,
-    status_filter: Optional[str] = Query(None, description="Filter by status: needsAction or completed"),
+    status_filter: Optional[str] = Query(
+        None, description="Filter by status: needsAction or completed"
+    ),
     include_completed: bool = Query(True, description="Include completed tasks"),
-    related_event_id: Optional[UUID] = Query(None, description="Filter by related event"),
+    related_event_id: Optional[UUID] = Query(
+        None, description="Filter by related event"
+    ),
     db: Session = Depends(get_db),
 ):
     """
@@ -200,7 +204,10 @@ async def update_task(
         if new_status == TaskStatus.COMPLETED and task.status != TaskStatus.COMPLETED:
             # Mark as completed
             task.completed_at = datetime.now(timezone.utc)
-        elif new_status == TaskStatus.NEEDS_ACTION and task.status == TaskStatus.COMPLETED:
+        elif (
+            new_status == TaskStatus.NEEDS_ACTION
+            and task.status == TaskStatus.COMPLETED
+        ):
             # Reopen task
             task.completed_at = None
 

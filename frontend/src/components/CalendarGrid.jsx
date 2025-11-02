@@ -56,12 +56,31 @@ function CalendarGrid({ weekStart, events, tasks = [], onSlotClick, onEventClick
     });
   }
 
-  function getTasksForDay(day) {
+  function getTasksForDayAndHour(day, hour) {
+    // Tasks appear at their due time on the calendar grid
     return tasks.filter(task => {
       if (!task.due) return false; // Only show tasks with due dates
       const taskDue = new Date(task.due);
-      return taskDue.toDateString() === day.toDateString();
+
+      // Check if task is due on this day
+      if (taskDue.toDateString() !== day.toDateString()) {
+        return false;
+      }
+
+      // Show task at its due hour
+      return taskDue.getHours() === hour;
     });
+  }
+
+  function getItemsForDayAndHour(day, hour) {
+    const eventsInSlot = getEventsForDayAndHour(day, hour);
+    const tasksInSlot = getTasksForDayAndHour(day, hour);
+
+    // Combine events and tasks, marking tasks with a type
+    return [
+      ...eventsInSlot.map(e => ({ ...e, itemType: 'event' })),
+      ...tasksInSlot.map(t => ({ ...t, itemType: 'task' }))
+    ];
   }
 
   function formatTime(hour) {
@@ -184,7 +203,7 @@ function CalendarGrid({ weekStart, events, tasks = [], onSlotClick, onEventClick
 
             {/* Day slots */}
             {weekDays.map((day, dayIndex) => {
-              const eventsInSlot = getEventsForDayAndHour(day, hour);
+              const itemsInSlot = getItemsForDayAndHour(day, hour);
 
               return (
                 <div
@@ -195,87 +214,63 @@ function CalendarGrid({ weekStart, events, tasks = [], onSlotClick, onEventClick
                   onDrop={(e) => handleDrop(e, day, hour)}
                   data-automation-id={`time-slot-${dayIndex}-${hour}`}
                 >
-                  {eventsInSlot.map((event) => (
-                    <EventCard
-                      key={event.id}
-                      event={event}
-                      currentDay={day}
-                      onClick={(e) => {
-                        onEventClick(event, e);
-                      }}
-                      onDragStart={handleDragStart}
-                      onResizeEnd={(newDuration) => {
-                        const start = new Date(event.start);
-                        const end = new Date(start.getTime() + newDuration);
-                        onEventUpdate(event.id, {
-                          start: event.start,
-                          end: end.toISOString(),
-                        });
-                      }}
-                    />
-                  ))}
+                  {itemsInSlot.map((item) => {
+                    if (item.itemType === 'task') {
+                      // Render task with checkbox
+                      return (
+                        <div
+                          key={item.id}
+                          className="absolute top-0 left-0 right-0 p-1 bg-blue-50 border-l-2 border-blue-500 hover:bg-blue-100 transition-colors cursor-pointer z-10"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEventClick(item, e); // Reuse event click handler for tasks
+                          }}
+                          data-automation-id={`task-${item.id}`}
+                        >
+                          <div className="flex items-start gap-1">
+                            <input
+                              type="checkbox"
+                              checked={item.status === 'completed'}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                onToggleTask(item.id);
+                              }}
+                              className="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <span className={`text-xs font-medium ${item.status === 'completed' ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+                              {item.title}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    } else {
+                      // Render event normally
+                      return (
+                        <EventCard
+                          key={item.id}
+                          event={item}
+                          currentDay={day}
+                          onClick={(e) => {
+                            onEventClick(item, e);
+                          }}
+                          onDragStart={handleDragStart}
+                          onResizeEnd={(newDuration) => {
+                            const start = new Date(item.start);
+                            const end = new Date(start.getTime() + newDuration);
+                            onEventUpdate(item.id, {
+                              start: item.start,
+                              end: end.toISOString(),
+                            });
+                          }}
+                        />
+                      );
+                    }
+                  })}
                 </div>
               );
             })}
           </div>
         ))}
-      </div>
-
-      {/* Tasks section - below calendar grid */}
-      <div className={`grid border-l border-t-2 border-gray-300 mt-4`} style={{ gridTemplateColumns: `60px repeat(${numDays}, 1fr)` }}>
-        {/* Empty corner cell for tasks */}
-        <div className="border-r border-gray-300 p-2 bg-gray-50">
-          <div className="text-xs font-medium text-gray-600">Tasks</div>
-        </div>
-
-        {/* Tasks for each day */}
-        {weekDays.map((day, dayIndex) => {
-          const dayTasks = getTasksForDay(day);
-
-          return (
-            <div
-              key={dayIndex}
-              className="border-r border-gray-300 p-2 min-h-[80px] bg-gray-50"
-              data-automation-id={`tasks-column-${dayIndex}`}
-            >
-              {dayTasks.length > 0 ? (
-                <div className="space-y-1">
-                  {dayTasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className="flex items-start gap-2 p-1 bg-white rounded hover:bg-gray-100 transition-colors"
-                      data-automation-id={`task-${task.id}`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={task.status === 'completed'}
-                        onChange={() => onToggleTask && onToggleTask(task.id)}
-                        className="mt-0.5 w-3.5 h-3.5 text-google-blue border-gray-300 rounded focus:ring-google-blue cursor-pointer flex-shrink-0"
-                        data-automation-id={`task-checkbox-${task.id}`}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className={`text-xs ${task.status === 'completed' ? 'line-through text-gray-500' : 'text-gray-900'}`}>
-                          {task.title}
-                        </div>
-                        {task.due && (
-                          <div className="text-[10px] text-gray-500 mt-0.5">
-                            {new Date(task.due).toLocaleTimeString('en-US', {
-                              hour: 'numeric',
-                              minute: '2-digit',
-                              hour12: true
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-xs text-gray-400 text-center py-2">No tasks</div>
-              )}
-            </div>
-          );
-        })}
       </div>
     </div>
   );

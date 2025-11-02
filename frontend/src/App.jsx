@@ -7,6 +7,7 @@ import EventModal from './components/EventModal';
 import TaskModal from './components/TaskModal';
 import QuickEventPopup from './components/QuickEventPopup';
 import SimulatedPopups from './components/SimulatedPopups';
+import TasksView from './components/TasksView';
 import {
   getUsers,
   getUserCalendars,
@@ -59,6 +60,11 @@ function App() {
   const [currentView, setCurrentView] = useState('week'); // 'day', 'week', 'month', '4days'
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentWeekStart, setCurrentWeekStart] = useState(getWeekStart(new Date()));
+  const [showViewDropdown, setShowViewDropdown] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [showTasksView, setShowTasksView] = useState(false);
 
   // Load users on mount
   useEffect(() => {
@@ -169,6 +175,14 @@ function App() {
   }
 
   function handleEditEvent(event, position) {
+    // Check if it's a task - if so, open task modal instead
+    if (event.itemType === 'task') {
+      setSelectedTask(event);
+      setTaskInitialDate(null);
+      setShowTaskModal(true);
+      return;
+    }
+
     // Show quick popup when clicking on an event
     setQuickPopupEvent(event);
 
@@ -404,6 +418,65 @@ function App() {
     }
   }
 
+  function getViewLabel() {
+    switch(currentView) {
+      case 'day': return 'Day';
+      case '4days': return '4 Days';
+      case 'week': return 'Week';
+      case 'month': return 'Month';
+      default: return 'Week';
+    }
+  }
+
+  function handleViewSelect(view) {
+    setCurrentView(view);
+    setShowViewDropdown(false);
+  }
+
+  function handleSearch() {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+
+    // Search events
+    const matchedEvents = events.filter(event =>
+      event.summary?.toLowerCase().includes(query) ||
+      event.description?.toLowerCase().includes(query) ||
+      event.location?.toLowerCase().includes(query)
+    );
+
+    // Search tasks
+    const matchedTasks = tasks.filter(task =>
+      task.title?.toLowerCase().includes(query) ||
+      task.notes?.toLowerCase().includes(query)
+    );
+
+    setSearchResults([
+      ...matchedEvents.map(e => ({ ...e, type: 'event' })),
+      ...matchedTasks.map(t => ({ ...t, type: 'task' }))
+    ]);
+  }
+
+  function handleSearchClose() {
+    setShowSearch(false);
+    setSearchQuery('');
+    setSearchResults([]);
+  }
+
+  function handleSearchResultClick(result) {
+    if (result.type === 'event') {
+      handleEditEvent(result);
+    } else {
+      setSelectedTask(result);
+      setTaskInitialDate(null);
+      setShowTaskModal(true);
+    }
+    handleSearchClose();
+  }
+
   // User selection screen
   if (showUserSelect) {
     return (
@@ -488,51 +561,107 @@ function App() {
           </div>
 
           <div className="flex items-center gap-4">
-            {/* View selector */}
+            {/* Search Icon - only show in calendar view */}
+            {!showTasksView && (
+              <button
+                onClick={() => setShowSearch(!showSearch)}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                data-automation-id="search-button"
+                title="Search"
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
+            )}
+
+            {/* View selector dropdown - only show in calendar view */}
+            {!showTasksView && (
+            <div className="relative">
+              <button
+                onClick={() => setShowViewDropdown(!showViewDropdown)}
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                data-automation-id="view-dropdown-button"
+              >
+                <span className="text-sm text-gray-700">{getViewLabel()}</span>
+                <svg className={`w-4 h-4 text-gray-600 transition-transform ${showViewDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Dropdown menu */}
+              {showViewDropdown && (
+                <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+                  <button
+                    onClick={() => handleViewSelect('day')}
+                    className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors ${
+                      currentView === 'day' ? 'bg-blue-50 text-google-blue font-medium' : 'text-gray-700'
+                    }`}
+                    data-automation-id="view-day"
+                  >
+                    Day
+                  </button>
+                  <button
+                    onClick={() => handleViewSelect('4days')}
+                    className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors ${
+                      currentView === '4days' ? 'bg-blue-50 text-google-blue font-medium' : 'text-gray-700'
+                    }`}
+                    data-automation-id="view-4days"
+                  >
+                    4 Days
+                  </button>
+                  <button
+                    onClick={() => handleViewSelect('week')}
+                    className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors ${
+                      currentView === 'week' ? 'bg-blue-50 text-google-blue font-medium' : 'text-gray-700'
+                    }`}
+                    data-automation-id="view-week"
+                  >
+                    Week
+                  </button>
+                  <button
+                    onClick={() => handleViewSelect('month')}
+                    className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors ${
+                      currentView === 'month' ? 'bg-blue-50 text-google-blue font-medium' : 'text-gray-700'
+                    }`}
+                    data-automation-id="view-month"
+                  >
+                    Month
+                  </button>
+                </div>
+              )}
+            </div>
+            )}
+
+            {/* Calendar/Tasks Segmented Control */}
             <div className="flex border border-gray-300 rounded overflow-hidden">
               <button
-                onClick={() => setCurrentView('day')}
-                className={`px-4 py-1.5 text-sm transition-colors ${
-                  currentView === 'day'
+                onClick={() => setShowTasksView(false)}
+                className={`px-4 py-1.5 text-sm transition-colors flex items-center gap-2 ${
+                  !showTasksView
                     ? 'bg-google-blue text-white'
                     : 'bg-white text-gray-700 hover:bg-gray-50'
                 }`}
-                data-automation-id="view-day"
+                data-automation-id="calendar-view-button"
               >
-                Day
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span>Calendar</span>
               </button>
               <button
-                onClick={() => setCurrentView('4days')}
-                className={`px-4 py-1.5 text-sm border-l border-gray-300 transition-colors ${
-                  currentView === '4days'
+                onClick={() => setShowTasksView(true)}
+                className={`px-4 py-1.5 text-sm border-l border-gray-300 transition-colors flex items-center gap-2 ${
+                  showTasksView
                     ? 'bg-google-blue text-white'
                     : 'bg-white text-gray-700 hover:bg-gray-50'
                 }`}
-                data-automation-id="view-4days"
+                data-automation-id="tasks-view-button"
               >
-                4 Days
-              </button>
-              <button
-                onClick={() => setCurrentView('week')}
-                className={`px-4 py-1.5 text-sm border-l border-gray-300 transition-colors ${
-                  currentView === 'week'
-                    ? 'bg-google-blue text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-                data-automation-id="view-week"
-              >
-                Week
-              </button>
-              <button
-                onClick={() => setCurrentView('month')}
-                className={`px-4 py-1.5 text-sm border-l border-gray-300 transition-colors ${
-                  currentView === 'month'
-                    ? 'bg-google-blue text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-                data-automation-id="view-month"
-              >
-                Month
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+                <span>Tasks</span>
               </button>
             </div>
 
@@ -552,7 +681,8 @@ function App() {
 
       {/* Main content with sidebar */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left Sidebar - Fixed, no scrolling */}
+        {/* Left Sidebar - Fixed, no scrolling - Only show in calendar view */}
+        {!showTasksView && (
         <aside className="flex-none w-64 border-r border-gray-300 bg-white flex flex-col overflow-y-auto">
           {/* Create button with dropdown */}
           <div className="p-4 relative">
@@ -611,59 +741,75 @@ function App() {
             />
           </div>
         </aside>
+        )}
 
         {/* Calendar Grid - Scrollable frame on the right */}
         <main className="flex-1 overflow-y-auto overflow-x-hidden bg-white">
-          {selectedCalendar ? (
-            <>
-              {currentView === 'day' && (
-                <DayView
-                  selectedDate={selectedDate}
-                  events={events}
-                  tasks={tasks}
-                  onSlotClick={handleCreateEvent}
-                  onEventClick={handleEditEvent}
-                  onEventUpdate={handleEventUpdate}
-                  onToggleTask={handleToggleTask}
-                />
-              )}
-              {currentView === 'week' && (
-                <CalendarGrid
-                  weekStart={currentWeekStart}
-                  events={events}
-                  tasks={tasks}
-                  onSlotClick={handleCreateEvent}
-                  onEventClick={handleEditEvent}
-                  onEventUpdate={handleEventUpdate}
-                  onToggleTask={handleToggleTask}
-                  numDays={7}
-                />
-              )}
-              {currentView === '4days' && (
-                <CalendarGrid
-                  weekStart={currentWeekStart}
-                  events={events}
-                  tasks={tasks}
-                  onSlotClick={handleCreateEvent}
-                  onEventClick={handleEditEvent}
-                  onEventUpdate={handleEventUpdate}
-                  onToggleTask={handleToggleTask}
-                  numDays={4}
-                />
-              )}
-              {currentView === 'month' && (
-                <MonthView
-                  currentMonth={selectedDate}
-                  events={events}
-                  onDateClick={handleMiniCalendarDateSelect}
-                  onEventClick={handleEditEvent}
-                />
-              )}
-            </>
+          {showTasksView ? (
+            /* Tasks View */
+            <TasksView
+              tasks={tasks}
+              onToggleTask={handleToggleTask}
+              onTaskClick={(task) => {
+                setSelectedTask(task);
+                setTaskInitialDate(null);
+                setShowTaskModal(true);
+              }}
+              onCreateTask={handleCreateTask}
+            />
           ) : (
-            <div className="flex items-center justify-center h-full">
-              <p className="text-gray-500">No calendar selected</p>
-            </div>
+            /* Calendar View */
+            selectedCalendar ? (
+              <>
+                {currentView === 'day' && (
+                  <DayView
+                    selectedDate={selectedDate}
+                    events={events}
+                    tasks={tasks}
+                    onSlotClick={handleCreateEvent}
+                    onEventClick={handleEditEvent}
+                    onEventUpdate={handleEventUpdate}
+                    onToggleTask={handleToggleTask}
+                  />
+                )}
+                {currentView === 'week' && (
+                  <CalendarGrid
+                    weekStart={currentWeekStart}
+                    events={events}
+                    tasks={tasks}
+                    onSlotClick={handleCreateEvent}
+                    onEventClick={handleEditEvent}
+                    onEventUpdate={handleEventUpdate}
+                    onToggleTask={handleToggleTask}
+                    numDays={7}
+                  />
+                )}
+                {currentView === '4days' && (
+                  <CalendarGrid
+                    weekStart={currentWeekStart}
+                    events={events}
+                    tasks={tasks}
+                    onSlotClick={handleCreateEvent}
+                    onEventClick={handleEditEvent}
+                    onEventUpdate={handleEventUpdate}
+                    onToggleTask={handleToggleTask}
+                    numDays={4}
+                  />
+                )}
+                {currentView === 'month' && (
+                  <MonthView
+                    currentMonth={selectedDate}
+                    events={events}
+                    onDateClick={handleMiniCalendarDateSelect}
+                    onEventClick={handleEditEvent}
+                  />
+                )}
+              </>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-gray-500">No calendar selected</p>
+              </div>
+            )
           )}
         </main>
       </div>
@@ -707,6 +853,116 @@ function App() {
             setTaskInitialDate(null);
           }}
         />
+      )}
+
+      {/* Search Modal */}
+      {showSearch && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-start justify-center pt-16">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl mx-4">
+            {/* Search Header */}
+            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-200">
+              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  if (e.target.value.trim()) {
+                    handleSearch();
+                  } else {
+                    setSearchResults([]);
+                  }
+                }}
+                placeholder="Search"
+                className="flex-1 text-lg border-0 focus:outline-none"
+                autoFocus
+                data-automation-id="search-input"
+              />
+              <button
+                onClick={handleSearchClose}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Search Results */}
+            <div className="max-h-96 overflow-y-auto">
+              {searchQuery.trim() === '' ? (
+                <div className="px-6 py-8 text-center text-gray-500">
+                  Start typing to search for events and tasks
+                </div>
+              ) : searchResults.length === 0 ? (
+                <div className="px-6 py-8 text-center text-gray-500">
+                  No results found for "{searchQuery}"
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-200">
+                  {searchResults.map((result, index) => (
+                    <button
+                      key={`${result.type}-${result.id}-${index}`}
+                      onClick={() => handleSearchResultClick(result)}
+                      className="w-full px-6 py-4 text-left hover:bg-gray-50 transition-colors flex items-start gap-3"
+                      data-automation-id={`search-result-${index}`}
+                    >
+                      {result.type === 'event' ? (
+                        <>
+                          <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-gray-900">{result.summary}</div>
+                            {result.start && (
+                              <div className="text-sm text-gray-600 mt-1">
+                                {new Date(result.start).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
+                                  hour: 'numeric',
+                                  minute: '2-digit'
+                                })}
+                              </div>
+                            )}
+                            {result.location && (
+                              <div className="text-sm text-gray-500 mt-1">{result.location}</div>
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                          </svg>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-gray-900">{result.title}</div>
+                            {result.due && (
+                              <div className="text-sm text-gray-600 mt-1">
+                                Due: {new Date(result.due).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
+                                  hour: 'numeric',
+                                  minute: '2-digit'
+                                })}
+                              </div>
+                            )}
+                            {result.notes && (
+                              <div className="text-sm text-gray-500 mt-1 truncate">{result.notes}</div>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Simulated Popups - for testing/demo purposes */}

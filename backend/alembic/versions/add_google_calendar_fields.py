@@ -10,12 +10,13 @@ This migration adds Google Calendar compatible fields to the events table:
 - creator_id (user who created the event)
 - organizer_id (user who organizes the event)
 """
+
 from alembic import op
 import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'add_google_fields'
+revision = "add_google_fields"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,33 +25,45 @@ depends_on = None
 def upgrade() -> None:
     """Add Google Calendar fields to events table."""
     # Add transparency column (opaque blocks time, transparent doesn't)
-    op.execute("""
+    op.execute(
+        """
         ALTER TABLE events ADD COLUMN transparency VARCHAR(11) DEFAULT 'opaque' NOT NULL
-    """)
+    """
+    )
 
     # Add visibility column (privacy level)
-    op.execute("""
+    op.execute(
+        """
         ALTER TABLE events ADD COLUMN visibility VARCHAR(12) DEFAULT 'default' NOT NULL
-    """)
+    """
+    )
 
     # Add creator_id column (who created the event)
-    op.execute("""
+    op.execute(
+        """
         ALTER TABLE events ADD COLUMN creator_id CHAR(36) NULL
-    """)
+    """
+    )
 
     # Add organizer_id column (who organizes the event)
-    op.execute("""
+    op.execute(
+        """
         ALTER TABLE events ADD COLUMN organizer_id CHAR(36) NULL
-    """)
+    """
+    )
 
     # Create indexes for performance
-    op.execute("""
+    op.execute(
+        """
         CREATE INDEX idx_event_creator ON events(creator_id)
-    """)
+    """
+    )
 
-    op.execute("""
+    op.execute(
+        """
         CREATE INDEX idx_event_organizer ON events(organizer_id)
-    """)
+    """
+    )
 
 
 def downgrade() -> None:
@@ -59,13 +72,17 @@ def downgrade() -> None:
     # You may need to recreate the table to truly drop columns
     # For now, we'll just drop the indexes
 
-    op.execute("""
+    op.execute(
+        """
         DROP INDEX IF EXISTS idx_event_creator
-    """)
+    """
+    )
 
-    op.execute("""
+    op.execute(
+        """
         DROP INDEX IF EXISTS idx_event_organizer
-    """)
+    """
+    )
 
     # To properly drop columns in SQLite, you would need to:
     # 1. Create new table without these columns
@@ -73,4 +90,6 @@ def downgrade() -> None:
     # 3. Drop old table
     # 4. Rename new table
     # This is complex, so we'll leave columns in place for safety
-    print("Note: Columns transparency, visibility, creator_id, organizer_id remain in table")
+    print(
+        "Note: Columns transparency, visibility, creator_id, organizer_id remain in table"
+    )

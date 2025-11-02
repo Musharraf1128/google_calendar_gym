@@ -12,5 +12,23 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
-  }
+  },
+  build: {
+    // Optimize chunk splitting for better caching
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-utils': ['axios'],
+        },
+      },
+    },
+    // Increase chunk size warning limit (default 500kb)
+    chunkSizeWarningLimit: 600,
+    // Enable sourcemaps for production debugging (optional)
+    sourcemap: false,
+    // Use esbuild for faster minification (default)
+    minify: 'esbuild',
+    target: 'es2015',
+  },
 })

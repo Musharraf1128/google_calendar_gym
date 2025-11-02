@@ -27,12 +27,22 @@ function DayView({ selectedDate, events, tasks = [], onSlotClick, onEventClick, 
     });
   }
 
-  function getTasksForDay() {
+  function getTasksForHour(hour) {
     return tasks.filter(task => {
       if (!task.due) return false; // Only show tasks with due dates
       const taskDue = new Date(task.due);
-      return taskDue.toDateString() === selectedDate.toDateString();
+      return taskDue.toDateString() === selectedDate.toDateString() && taskDue.getHours() === hour;
     });
+  }
+
+  function getItemsForHour(hour) {
+    const eventsInSlot = getEventsForHour(hour);
+    const tasksInSlot = getTasksForHour(hour);
+
+    return [
+      ...eventsInSlot.map(e => ({ ...e, itemType: 'event' })),
+      ...tasksInSlot.map(t => ({ ...t, itemType: 'task' }))
+    ];
   }
 
   function formatTime(hour) {
@@ -103,14 +113,12 @@ function DayView({ selectedDate, events, tasks = [], onSlotClick, onEventClick, 
     setDraggedEvent(null);
   }
 
-  const dayTasks = getTasksForDay();
-
   return (
     <div className="bg-white" data-automation-id="day-view">
       <div className="grid grid-cols-[80px_1fr]">
         {/* Time slots */}
         {HOURS.map((hour) => {
-          const eventsInSlot = getEventsForHour(hour);
+          const itemsInSlot = getItemsForHour(hour);
 
           return (
             <div key={hour} className="contents">
@@ -127,73 +135,64 @@ function DayView({ selectedDate, events, tasks = [], onSlotClick, onEventClick, 
                 onDrop={(e) => handleDrop(e, hour)}
                 data-automation-id={`day-slot-${hour}`}
               >
-                {eventsInSlot.map((event) => (
-                  <EventCard
-                    key={event.id}
-                    event={event}
-                    currentDay={selectedDate}
-                    onClick={(e) => {
-                      onEventClick(event, e);
-                    }}
-                    onDragStart={handleDragStart}
-                    onResizeEnd={(newDuration) => {
-                      const start = new Date(event.start);
-                      const end = new Date(start.getTime() + newDuration);
-                      onEventUpdate(event.id, {
-                        start: event.start,
-                        end: end.toISOString(),
-                      });
-                    }}
-                  />
-                ))}
+                {itemsInSlot.map((item) => {
+                  if (item.itemType === 'task') {
+                    // Render task with checkbox
+                    return (
+                      <div
+                        key={item.id}
+                        className="absolute top-0 left-0 right-0 p-1 bg-blue-50 border-l-2 border-blue-500 hover:bg-blue-100 transition-colors cursor-pointer z-10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEventClick(item, e);
+                        }}
+                        data-automation-id={`task-${item.id}`}
+                      >
+                        <div className="flex items-start gap-1">
+                          <input
+                            type="checkbox"
+                            checked={item.status === 'completed'}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              onToggleTask(item.id);
+                            }}
+                            className="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <span className={`text-xs font-medium ${item.status === 'completed' ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+                            {item.title}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  } else {
+                    // Render event normally
+                    return (
+                      <EventCard
+                        key={item.id}
+                        event={item}
+                        currentDay={selectedDate}
+                        onClick={(e) => {
+                          onEventClick(item, e);
+                        }}
+                        onDragStart={handleDragStart}
+                        onResizeEnd={(newDuration) => {
+                          const start = new Date(item.start);
+                          const end = new Date(start.getTime() + newDuration);
+                          onEventUpdate(item.id, {
+                            start: item.start,
+                            end: end.toISOString(),
+                          });
+                        }}
+                      />
+                    );
+                  }
+                })}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Tasks section */}
-      {dayTasks.length > 0 && (
-        <div className="border-t-2 border-gray-300 mt-4">
-          <div className="px-4 py-3">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Tasks</h3>
-            <div className="space-y-2">
-              {dayTasks.map((task) => (
-                <div
-                  key={task.id}
-                  className="flex items-start gap-3 p-2 hover:bg-gray-50 rounded transition-colors"
-                  data-automation-id={`task-${task.id}`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={task.status === 'completed'}
-                    onChange={() => onToggleTask && onToggleTask(task.id)}
-                    className="mt-1 w-4 h-4 text-google-blue border-gray-300 rounded focus:ring-google-blue cursor-pointer"
-                    data-automation-id={`task-checkbox-${task.id}`}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className={`text-sm ${task.status === 'completed' ? 'line-through text-gray-500' : 'text-gray-900'}`}>
-                      {task.title}
-                    </div>
-                    {task.notes && (
-                      <div className="text-xs text-gray-600 mt-1">{task.notes}</div>
-                    )}
-                    {task.due && (
-                      <div className="text-xs text-gray-500 mt-1">
-                        Due: {new Date(task.due).toLocaleTimeString('en-US', {
-                          hour: 'numeric',
-                          minute: '2-digit',
-                          hour12: true
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

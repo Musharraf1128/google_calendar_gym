@@ -7,6 +7,7 @@ This module tests:
 - Organizer notifications
 - Recurring event responses
 """
+
 import pytest
 from datetime import datetime, timezone
 from uuid import uuid4
@@ -268,8 +269,12 @@ class TestAttendeeResponses:
         )
 
         responses = {a.email: a.response_status for a in attendees}
-        assert responses[test_users["attendee1"].email] == AttendeeResponseStatus.ACCEPTED
-        assert responses[test_users["attendee2"].email] == AttendeeResponseStatus.DECLINED
+        assert (
+            responses[test_users["attendee1"].email] == AttendeeResponseStatus.ACCEPTED
+        )
+        assert (
+            responses[test_users["attendee2"].email] == AttendeeResponseStatus.DECLINED
+        )
 
     def test_change_response(self, db, test_event, test_users):
         """Test that an attendee can change their response."""
@@ -304,7 +309,9 @@ class TestAttendeeResponses:
 class TestRecurringEventResponses:
     """Test attendee responses for recurring events."""
 
-    def test_decline_recurring_instance_notifies_organizer(self, db, test_calendar, test_users):
+    def test_decline_recurring_instance_notifies_organizer(
+        self, db, test_calendar, test_users
+    ):
         """
         Test that declining a recurring event instance creates a notification
         for the organizer.

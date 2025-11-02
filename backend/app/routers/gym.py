@@ -30,6 +30,7 @@ class ResetResponse(BaseModel):
     """Response model for environment reset."""
 
     observation: Dict[str, Any] = Field(..., description="Initial observation")
+    screenshot: str = Field(..., description="Base64 encoded PNG screenshot")
     env_id: str = Field(..., description="Environment instance ID")
     info: Dict[str, Any] = Field(default_factory=dict, description="Additional info")
 
@@ -45,6 +46,7 @@ class StepResponse(BaseModel):
     """Response model for environment step."""
 
     observation: Dict[str, Any] = Field(..., description="New observation")
+    screenshot: str = Field(..., description="Base64 encoded PNG screenshot")
     reward: float = Field(..., description="Reward received")
     done: bool = Field(..., description="Whether episode is done")
     info: Dict[str, Any] = Field(..., description="Additional info")
@@ -111,9 +113,11 @@ async def reset_environment(request: ResetRequest):
     try:
         env = _get_or_create_env(env_id)
         observation = env.reset(seed=request.seed)
+        screenshot = env.render_screenshot()
 
         return ResetResponse(
             observation=observation,
+            screenshot=screenshot,
             env_id=env_id,
             info={"step": 0, "episode_reward": 0.0, "max_steps": env.max_steps},
         )
@@ -167,9 +171,14 @@ async def step_environment(request: StepRequest):
     try:
         env = _environments[env_id]
         observation, reward, done, info = env.step(request.action)
+        screenshot = env.render_screenshot()
 
         return StepResponse(
-            observation=observation, reward=reward, done=done, info=info
+            observation=observation,
+            screenshot=screenshot,
+            reward=reward,
+            done=done,
+            info=info,
         )
 
     except Exception as e:

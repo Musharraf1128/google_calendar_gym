@@ -31,12 +31,14 @@ class TaskStatusEnum(str, Enum):
 
 class EventTransparencyEnum(str, Enum):
     """Event transparency for free/busy time."""
+
     opaque = "opaque"
     transparent = "transparent"
 
 
 class EventVisibilityEnum(str, Enum):
     """Event visibility/privacy level."""
+
     default = "default"
     public = "public"
     private = "private"
@@ -72,14 +74,14 @@ class UserResponse(UserBase):
 
     model_config = ConfigDict(from_attributes=True)
 
-    @field_serializer('created_at', 'updated_at')
+    @field_serializer("created_at", "updated_at")
     def serialize_datetime(self, dt: datetime, _info) -> str:
         """Ensure all datetime fields are serialized as UTC ISO strings with 'Z' suffix."""
         if dt is None:
             return None
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
-        return dt.astimezone(timezone.utc).isoformat().replace('+00:00', 'Z')
+        return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 # ============ Calendar Schemas ============
@@ -107,14 +109,14 @@ class CalendarResponse(CalendarBase):
 
     model_config = ConfigDict(from_attributes=True)
 
-    @field_serializer('created_at', 'updated_at')
+    @field_serializer("created_at", "updated_at")
     def serialize_datetime(self, dt: datetime, _info) -> str:
         """Ensure all datetime fields are serialized as UTC ISO strings with 'Z' suffix."""
         if dt is None:
             return None
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
-        return dt.astimezone(timezone.utc).isoformat().replace('+00:00', 'Z')
+        return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 class CalendarWithOwner(CalendarResponse):
@@ -149,14 +151,14 @@ class CalendarListEntryResponse(CalendarListEntryBase):
 
     model_config = ConfigDict(from_attributes=True)
 
-    @field_serializer('created_at', 'updated_at')
+    @field_serializer("created_at", "updated_at")
     def serialize_datetime(self, dt: datetime, _info) -> str:
         """Ensure all datetime fields are serialized as UTC ISO strings with 'Z' suffix."""
         if dt is None:
             return None
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
-        return dt.astimezone(timezone.utc).isoformat().replace('+00:00', 'Z')
+        return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 class CalendarListEntryWithDetails(CalendarListEntryResponse):
@@ -211,7 +213,7 @@ class EventResponse(EventBase):
 
     model_config = ConfigDict(from_attributes=True)
 
-    @field_serializer('start', 'end', 'created_at', 'updated_at')
+    @field_serializer("start", "end", "created_at", "updated_at")
     def serialize_datetime(self, dt: datetime, _info) -> str:
         """Ensure all datetime fields are serialized as UTC ISO strings with 'Z' suffix."""
         if dt is None:
@@ -220,7 +222,7 @@ class EventResponse(EventBase):
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
         # Convert to UTC and format as ISO string with 'Z' suffix
-        return dt.astimezone(timezone.utc).isoformat().replace('+00:00', 'Z')
+        return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 # ============ EventAttendee Schemas ============
@@ -254,14 +256,14 @@ class EventAttendeeResponse(EventAttendeeBase):
 
     model_config = ConfigDict(from_attributes=True)
 
-    @field_serializer('created_at', 'updated_at')
+    @field_serializer("created_at", "updated_at")
     def serialize_datetime(self, dt: datetime, _info) -> str:
         """Ensure all datetime fields are serialized as UTC ISO strings with 'Z' suffix."""
         if dt is None:
             return None
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
-        return dt.astimezone(timezone.utc).isoformat().replace('+00:00', 'Z')
+        return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 # ============ CalendarACL Schemas ============
@@ -286,14 +288,14 @@ class CalendarACLResponse(CalendarACLBase):
 
     model_config = ConfigDict(from_attributes=True)
 
-    @field_serializer('created_at', 'updated_at')
+    @field_serializer("created_at", "updated_at")
     def serialize_datetime(self, dt: datetime, _info) -> str:
         """Ensure all datetime fields are serialized as UTC ISO strings with 'Z' suffix."""
         if dt is None:
             return None
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
-        return dt.astimezone(timezone.utc).isoformat().replace('+00:00', 'Z')
+        return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 # ============ Reminder Schemas ============
@@ -320,14 +322,14 @@ class ReminderResponse(ReminderBase):
 
     model_config = ConfigDict(from_attributes=True)
 
-    @field_serializer('created_at')
+    @field_serializer("created_at")
     def serialize_datetime(self, dt: datetime, _info) -> str:
         """Ensure all datetime fields are serialized as UTC ISO strings with 'Z' suffix."""
         if dt is None:
             return None
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
-        return dt.astimezone(timezone.utc).isoformat().replace('+00:00', 'Z')
+        return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 # ============ Extended Response Schemas with Relations ============
@@ -367,14 +369,14 @@ class GymEventResponse(GymEventBase):
 
     model_config = ConfigDict(from_attributes=True)
 
-    @field_serializer('start_time', 'end_time', 'created_at', 'updated_at')
+    @field_serializer("start_time", "end_time", "created_at", "updated_at")
     def serialize_datetime(self, dt: datetime, _info) -> str:
         """Ensure all datetime fields are serialized as UTC ISO strings with 'Z' suffix."""
         if dt is None:
             return None
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
-        return dt.astimezone(timezone.utc).isoformat().replace('+00:00', 'Z')
+        return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 # ============ Task Schemas ============
@@ -407,11 +409,11 @@ class TaskResponse(TaskBase):
 
     model_config = ConfigDict(from_attributes=True)
 
-    @field_serializer('due', 'completed_at', 'created_at', 'updated_at')
+    @field_serializer("due", "completed_at", "created_at", "updated_at")
     def serialize_datetime(self, dt: datetime, _info) -> str:
         """Ensure all datetime fields are serialized as UTC ISO strings with 'Z' suffix."""
         if dt is None:
             return None
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
-        return dt.astimezone(timezone.utc).isoformat().replace('+00:00', 'Z')
+        return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")

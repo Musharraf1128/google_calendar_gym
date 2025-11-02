@@ -49,12 +49,14 @@ class TaskStatus(str, enum.Enum):
 
 class EventTransparency(str, enum.Enum):
     """Event transparency for free/busy time."""
+
     opaque = "opaque"  # Default - blocks time in free/busy
     transparent = "transparent"  # Doesn't block time in free/busy
 
 
 class EventVisibility(str, enum.Enum):
     """Event visibility/privacy level."""
+
     default = "default"  # Default visibility (inherits from calendar)
     public = "public"  # Public event
     private = "private"  # Private event
@@ -172,16 +174,14 @@ class Event(Base):
     location = Column(String(500), nullable=True)
     status = Column(Enum(EventStatus), default=EventStatus.CONFIRMED, nullable=False)
     transparency = Column(
-        Enum(EventTransparency),
-        default=EventTransparency.opaque,
-        nullable=False
+        Enum(EventTransparency), default=EventTransparency.opaque, nullable=False
     )  # opaque (blocks time) or transparent (doesn't block)
     visibility = Column(
-        Enum(EventVisibility),
-        default=EventVisibility.default,
-        nullable=False
+        Enum(EventVisibility), default=EventVisibility.default, nullable=False
     )  # default, public, private, confidential
-    color_id = Column(Integer, default=0, nullable=True)  # Event color (0-11 per Google)
+    color_id = Column(
+        Integer, default=0, nullable=True
+    )  # Event color (0-11 per Google)
 
     # Creator and Organizer
     creator_id = Column(
@@ -209,9 +209,7 @@ class Event(Base):
 
     # Relationships
     calendar = relationship("Calendar", back_populates="events")
-    creator = relationship(
-        "User", foreign_keys=[creator_id], backref="created_events"
-    )
+    creator = relationship("User", foreign_keys=[creator_id], backref="created_events")
     organizer = relationship(
         "User", foreign_keys=[organizer_id], backref="organized_events"
     )
@@ -221,9 +219,7 @@ class Event(Base):
     reminders = relationship(
         "Reminder", back_populates="event", cascade="all, delete-orphan"
     )
-    linked_tasks = relationship(
-        "Task", back_populates="related_event"
-    )
+    linked_tasks = relationship("Task", back_populates="related_event")
 
     # Indexes
     __table_args__ = (
@@ -359,20 +355,21 @@ class Task(Base):
     - status: needsAction or completed
     - related_event_id: Link to calendar event (optional)
     """
+
     __tablename__ = "tasks"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     user_id = Column(
-        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     title = Column(String(500), nullable=False)
     notes = Column(Text, nullable=True)
     due = Column(DateTime, nullable=True, index=True)  # Due date/time (optional)
     status = Column(
-        Enum(TaskStatus),
-        nullable=False,
-        default=TaskStatus.NEEDS_ACTION,
-        index=True
+        Enum(TaskStatus), nullable=False, default=TaskStatus.NEEDS_ACTION, index=True
     )
 
     # Optional link to a calendar event

@@ -394,7 +394,7 @@ class TestRecurrenceWithExdates:
             end=start_date + timedelta(minutes=60),
             recurrence=[
                 "RRULE:FREQ=DAILY;COUNT=10",
-                "EXDATE:20251103T100000,20251107T100000,20251109T100000"
+                "EXDATE:20251103T100000,20251107T100000,20251109T100000",
             ],
             status=EventStatus.CONFIRMED,
         )
@@ -437,7 +437,7 @@ class TestRecurrenceWithExdates:
             end=start_date + timedelta(minutes=60),
             recurrence=[
                 "RRULE:FREQ=WEEKLY;BYDAY=MO,FR;COUNT=8",  # 4 weeks = 8 occurrences
-                "EXDATE:20251110T140000,20251121T140000"
+                "EXDATE:20251110T140000,20251121T140000",
             ],
             status=EventStatus.CONFIRMED,
         )
@@ -498,7 +498,10 @@ class TestFreeBusyReaderRestrictions:
 
         # Verify permissions
         assert check_permission(
-            db_session, freebusy_user.id, test_calendar.id, CalendarRole.FREE_BUSY_READER
+            db_session,
+            freebusy_user.id,
+            test_calendar.id,
+            CalendarRole.FREE_BUSY_READER,
         )
         assert not check_permission(
             db_session, freebusy_user.id, test_calendar.id, CalendarRole.READER
@@ -687,7 +690,9 @@ class TestRecurringEventInstanceCancellation:
 
         # Organizer queries attendees for this event
         attendees = (
-            db_session.query(EventAttendee).filter(EventAttendee.event_id == event.id).all()
+            db_session.query(EventAttendee)
+            .filter(EventAttendee.event_id == event.id)
+            .all()
         )
 
         declined_attendees = [
@@ -913,7 +918,9 @@ class TestAdditionalEdgeCases:
 
         # Reminder at 9 AM on the day of event
         reminder = Reminder(
-            event_id=event.id, method=ReminderMethod.EMAIL, minutes_before=540  # 9 hours before midnight = 3 PM day before
+            event_id=event.id,
+            method=ReminderMethod.EMAIL,
+            minutes_before=540,  # 9 hours before midnight = 3 PM day before
         )
         db_session.add(reminder)
         db_session.commit()
@@ -975,7 +982,9 @@ class TestAdditionalEdgeCases:
         assert event.status == EventStatus.CANCELLED
 
         event_attendees = (
-            db_session.query(EventAttendee).filter(EventAttendee.event_id == event.id).all()
+            db_session.query(EventAttendee)
+            .filter(EventAttendee.event_id == event.id)
+            .all()
         )
         assert len(event_attendees) == 2
 

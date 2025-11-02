@@ -102,6 +102,7 @@ async def create_calendar(calendar_data: CalendarCreate, db: Session = Depends(g
 
     # Add owner to calendar list
     from app.models.models import CalendarRole
+
     calendar_entry = CalendarListEntry(
         user_id=calendar_data.owner_id,
         calendar_id=new_calendar.id,

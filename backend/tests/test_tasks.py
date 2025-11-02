@@ -9,6 +9,7 @@ This module tests:
 - Task filtering (status, related event)
 - Event + linked task → toggle completion updates UI
 """
+
 import pytest
 from datetime import datetime, timezone, timedelta
 from uuid import uuid4

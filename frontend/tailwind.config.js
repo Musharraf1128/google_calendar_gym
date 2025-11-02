@@ -25,7 +25,15 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Roboto', 'Arial', 'sans-serif'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+      boxShadow: {
+        'soft': '0 2px 8px rgba(0, 0, 0, 0.08)',
+        'medium': '0 4px 16px rgba(0, 0, 0, 0.12)',
+        'hover': '0 8px 24px rgba(0, 0, 0, 0.15)',
+      },
+      borderRadius: {
+        '2xl': '1rem',
       },
       spacing: {
         '48': '3rem',

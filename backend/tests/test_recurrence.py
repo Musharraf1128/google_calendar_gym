@@ -479,7 +479,7 @@ class TestExpandRecurrence:
         assert len(occurrences) == 2
 
         # Verify the dates
-        assert occurrences[0] == datetime(2025, 11, 3, 14, 0)   # Week 1
+        assert occurrences[0] == datetime(2025, 11, 3, 14, 0)  # Week 1
         assert occurrences[1] == datetime(2025, 11, 10, 14, 0)  # Week 2
 
         # Verify 7-day interval

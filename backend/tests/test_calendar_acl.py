@@ -8,6 +8,7 @@ This module tests:
 - Owner sees all event fields
 - FreeBusyReader sees only start/end times
 """
+
 import pytest
 from datetime import datetime, timezone
 from uuid import uuid4
@@ -313,7 +314,9 @@ class TestEventAccessFiltering:
     - freeBusyReader: See only start/end times (no summary, location, description)
     """
 
-    def test_owner_sees_all_event_fields(self, db, shared_calendar, test_event, owner_user):
+    def test_owner_sees_all_event_fields(
+        self, db, shared_calendar, test_event, owner_user
+    ):
         """
         Test that calendar owner sees all event fields.
 
