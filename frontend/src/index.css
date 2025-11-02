@@ -1,0 +1,39 @@
+/* Google Fonts - must come first */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+@layer base {
+  body {
+    @apply font-sans bg-white text-gray-900;
+  }
+}
+
+/* Custom utilities for calendar */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Event drag styles */
+.event-dragging {
+  opacity: 0.6;
+  cursor: grabbing;
+}
+
+.event-resizing {
+  cursor: ns-resize;
+}
+
+/* Automation-friendly IDs and classes */
+[data-automation-id] {
+  /* These elements are designed for automation testing */
+}
