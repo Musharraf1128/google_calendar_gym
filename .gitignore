@@ -41,7 +41,7 @@ htmlcov/
 *.cover
 
 # Database
-*.db
+#*.db
 *.db.backup
 *.db.pre-migration
 *.sqlite
