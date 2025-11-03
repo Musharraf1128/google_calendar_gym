@@ -28,7 +28,7 @@ env/
 htmlcov/
 
 # Database files (will be created in container)
-*.db
+# *.db
 *.sqlite
 *.sqlite3
 
